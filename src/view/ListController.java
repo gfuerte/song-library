@@ -4,25 +4,30 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import models.Song;
 
 public class ListController {
 	@FXML
 	ListView<String> listView;
+	@FXML
+	Text songName;
+	@FXML // fx:id="add"
+    private Button add; // Value injected by FXMLLoader
+
 
 	private ObservableList<String> obsList;
 
@@ -31,18 +36,18 @@ public class ListController {
 		obsList = FXCollections.observableArrayList(readFile());
 
 		listView.setItems(obsList);
-
-
+				
 		// select the first item
 		listView.getSelectionModel().select(0);
+		songName.setText(listView.getSelectionModel().getSelectedItem());
 
+		
 		// set listener for the items
-		listView.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> showItem(mainStage));
+		listView.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> selectItem(mainStage));
 		
 		// after user adds/deletes/edits songs writeFile updates song.txt file
 		mainStage.setOnCloseRequest(event -> {
-			//test add
-			obsList.add("test");
+			//obsList.add("test");
 			
 			//writeFile writes to song.txt file
 			writeFile(obsList);
@@ -93,33 +98,17 @@ public class ListController {
 		}
 		
 	}
-
-	private void showItem(Stage mainStage) {
+	
+	@FXML
+    private void addSong(ActionEvent event) {
 		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.initOwner(mainStage);
-		alert.setTitle("List Item");
-		alert.setHeaderText("Selected list item properties");
-
-		String content = "Index: " + listView.getSelectionModel().getSelectedIndex() + "\nValue: "
-				+ listView.getSelectionModel().getSelectedItem();
-
+		String content = "we gon add";
 		alert.setContentText(content);
 		alert.showAndWait();
-	}
+    }
 
-	private void showItemInputDialog(Stage mainStage) {
-		String item = listView.getSelectionModel().getSelectedItem();
-		int index = listView.getSelectionModel().getSelectedIndex();
 
-		TextInputDialog dialog = new TextInputDialog(item);
-		dialog.initOwner(mainStage);
-		dialog.setTitle("List Item");
-		dialog.setHeaderText("Selected Item (Index: " + index + ")");
-		dialog.setContentText("Enter name: ");
-
-		Optional<String> result = dialog.showAndWait();
-		if (result.isPresent()) {
-			obsList.set(index, result.get());
-		}
+	private void selectItem(Stage mainStage) {
+		songName.setText(listView.getSelectionModel().getSelectedItem());
 	}
 }
