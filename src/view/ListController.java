@@ -59,12 +59,9 @@ public class ListController {
 		listView.getSelectionModel().selectedIndexProperty().addListener((songList, oldVal, newVal) -> selectItem(mainStage));
 		
 		// after user adds/deletes/edits songs writeFile updates song.txt file
-		mainStage.setOnCloseRequest(event -> {
-			//obsList.add("test");
-			
+		mainStage.setOnCloseRequest(event -> {			
 			//writeFile writes to song.txt file
 			writeFile(songList);
-	     
 	    });
 	}
 
@@ -147,7 +144,6 @@ public class ListController {
 	
 	@FXML
     private void deleteSong(ActionEvent event) {
-		/* Not working currently
 		Song song = songMap.get(listView.getSelectionModel().getSelectedItem());
 		int index = listView.getSelectionModel().getSelectedIndex();
 		songList.remove(song.getName());
@@ -161,7 +157,12 @@ public class ListController {
 		} else {
 			listView.getSelectionModel().select(index);
 		}
-		*/
+		
+		song = songMap.get(listView.getSelectionModel().getSelectedItem());
+		songName.setText(song.getName());
+		songArtist.setText(song.getArtist());
+		songAlbum.setText(song.getAlbum());
+		songYear.setText(song.getYear());
     }
 	
 	@FXML
@@ -175,7 +176,7 @@ public class ListController {
 	//gets String value from selected item --> accesses hashmap for song --> sets all fields to song details
 	private void selectItem(Stage mainStage) {
 		Song song = songMap.get(listView.getSelectionModel().getSelectedItem());
-		//if(song == null) return;
+		if(song == null) song = new Song("", "", "", "");
 		songName.setText(song.getName());
 		songArtist.setText(song.getArtist());
 		songAlbum.setText(song.getAlbum());
