@@ -4,33 +4,12 @@ public class Song {
 	private String name;
 	private String artist;
 	private String album;
-	private int year;
+	private String year;
 	
-	public Song(String name, String artist) {
-		this.name = name;
-		this.artist = artist;
-		this.album = "";
-		this.year = 0;
-	}
-	
-	public Song(String name, String artist, String album, int year) {
+	public Song(String name, String artist, String album, String year) {
 		this.name = name;
 		this.artist = artist;
 		this.album = album;
-		this.year = year;
-	}
-	
-	public Song(String name, String artist, String album) {
-		this.name = name;
-		this.artist = artist;
-		this.album = album;
-		this.year = 0;
-	}
-	
-	public Song(String name, String artist, int year) {
-		this.name = name;
-		this.artist = artist;
-		this.album = "";
 		this.year = year;
 	}
 	
@@ -46,7 +25,7 @@ public class Song {
 		return this.album;
 	}
 	
-	public int getYear() {
+	public String getYear() {
 		return this.year;
 	}
 }
