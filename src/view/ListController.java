@@ -40,6 +40,7 @@ public class ListController {
 
 	private ObservableList<String> songList;
 	private HashMap<String, Song> songMap = new HashMap<>();
+	private final String separator = "   -   ";
 
 	public void start(Stage mainStage) {
 		songList = FXCollections.observableArrayList(readFile());
@@ -54,7 +55,8 @@ public class ListController {
 			songAlbum.setText("");
 			songYear.setText("");
 		} else {
-			Song song = songMap.get(listView.getSelectionModel().getSelectedItem());
+			String label = listView.getSelectionModel().getSelectedItem();
+			Song song = songMap.get(label.substring(0, label.indexOf(separator)));
 			songName.setText(song.getName());
 			songArtist.setText(song.getArtist());
 			songAlbum.setText(song.getAlbum());
@@ -91,10 +93,10 @@ public class ListController {
 					switch (count) {
 					case 1:
 						name = data;
-						list.add(data);
 						break;
 					case 2:
 						artist = data;
+						list.add(name + separator + artist);
 						break;
 					case 3:
 						album = data;
@@ -128,7 +130,9 @@ public class ListController {
 			file.createNewFile();
 			FileWriter writer = new FileWriter("song.txt");
 			for (int i = 0; i < songList.size(); i++) {
-				Song song = songMap.get(songList.get(i));
+				String label = songList.get(i);
+				Song song = songMap.get(label.substring(0, label.indexOf(separator)));
+	
 				writer.write(song.getName() + "\n" + song.getArtist() + "\n" + song.getAlbum() + "\n" + song.getYear()
 						+ "\n");
 			}
@@ -145,7 +149,6 @@ public class ListController {
 		d.setTitle("Song");
 		d.setHeaderText("Please Add The Respective Information For Song");
 
-		// Will create a grid of rows and columns
 		GridPane g = new GridPane();
 		g.setPadding(new Insets(10, 10, 10, 10));
 		g.setMinSize(300, 300);
@@ -177,13 +180,12 @@ public class ListController {
 
 		Optional<Song> result = d.showAndWait();
 		if (result.isPresent()) {
-			String sName = t1.getText();
-			String aName = t2.getText();
+			String name = t1.getText();
+			String artist = t2.getText();
 			String year = t3.getText();
 			String album = t4.getText();
 
-			if (sName.isEmpty() || aName.isEmpty()) {
-
+			if (name.isEmpty() || artist.isEmpty()) {
 				Alert alert = new Alert(AlertType.ERROR);
 				String content = "Please make sure song name and artist name is not empty";
 				alert.setContentText(content);
@@ -192,8 +194,8 @@ public class ListController {
 			}
 
 			for (String s : songList) {
-				Song song = songMap.get(s);
-				if (song.getName().toLowerCase().equals(sName) && song.getArtist().toLowerCase().equals(aName)) {
+				Song song = songMap.get(s.substring(0, s.indexOf(separator)));
+				if (song.getName().toLowerCase().equals(name) && song.getArtist().toLowerCase().equals(artist)) {
 					Alert alert = new Alert(AlertType.ERROR);
 					String content = "This song already exists";
 					alert.setContentText(content);
@@ -214,31 +216,44 @@ public class ListController {
 				}
 			}
 			
-			Song song = new Song(sName, aName, album, year);
-			songMap.put(sName, song);
-			//songList.add(song.getName());
+			Song song = new Song(name, artist, album, year);
+			songMap.put(name, song);
 			insertSong(song);
 		}
 	}
 
 	@FXML
 	private void deleteSong(ActionEvent event) {
-		Song song = songMap.get(listView.getSelectionModel().getSelectedItem());
-		int index = listView.getSelectionModel().getSelectedIndex();
-		songList.remove(song.getName());
-		songMap.remove(song.getName());
-		listView.setItems(songList);
-
-		if (songList.size() == 0)
+		if(songList.size() == 0) {
+			Alert alert = new Alert(AlertType.INFORMATION);
+			String content = "No songs to be deleted";
+			alert.setContentText(content);
+			alert.showAndWait();
 			return;
+		}
+		
+		String label = listView.getSelectionModel().getSelectedItem();
+		Song song = songMap.get(label.substring(0, label.indexOf(separator)));
+		int index = listView.getSelectionModel().getSelectedIndex();
+		songList.remove(song.getName() + separator + song.getArtist());
+		songMap.remove(song.getName());
+
+		if (songList.size() == 0) {
+			songName.setText("");
+			songArtist.setText("");
+			songAlbum.setText("");
+			songYear.setText("");
+			return;
+		}
 
 		if (index == songList.size()) {
 			listView.getSelectionModel().select(index - 1);
 		} else {
 			listView.getSelectionModel().select(index);
 		}
-
-		song = songMap.get(listView.getSelectionModel().getSelectedItem());
+		
+		label = listView.getSelectionModel().getSelectedItem();
+		song = songMap.get(label.substring(0, label.indexOf(separator)));
 		songName.setText(song.getName());
 		songArtist.setText(song.getArtist());
 		songAlbum.setText(song.getAlbum());
@@ -253,12 +268,14 @@ public class ListController {
 		alert.showAndWait();
 	}
 
-	// gets String value from selected item --> accesses hashmap for song --> sets
-	// all fields to song details
 	private void selectItem(Stage mainStage) {
-		Song song = songMap.get(listView.getSelectionModel().getSelectedItem());
-		if (song == null)
+		String label = listView.getSelectionModel().getSelectedItem();
+		Song song;
+		if (label == null) {
 			song = new Song("", "", "", "");
+		} else {
+			song = songMap.get(label.substring(0, label.indexOf(separator)));
+		}
 		songName.setText(song.getName());
 		songArtist.setText(song.getArtist());
 		songAlbum.setText(song.getAlbum());
@@ -267,20 +284,18 @@ public class ListController {
 	
 	private void insertSong(Song song) {
 		if(songList.size() == 0) {
-			songList.add(song.getName());
+			songList.add(song.getName() + separator + song.getArtist());
 			listView.getSelectionModel().selectFirst();
-			//songList.add(song.getName() + " -- " + song.getArtist());
 		}
 		
 		for(int i = 0; i < songList.size(); i++) {
 			if(song.getName().compareToIgnoreCase(songList.get(i)) < 0) {
-				songList.add(i, song.getName());
+				songList.add(i, song.getName() + separator + song.getArtist());
 				listView.getSelectionModel().select(i);
 				return;
 			}
 		}
-		
-		songList.add(song.getName());
+		songList.add(song.getName() + separator + song.getArtist());
 		listView.getSelectionModel().selectLast();
 	}
 }
