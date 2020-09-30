@@ -1,3 +1,4 @@
+//Project by Greg Fuerte & Aries Regalado
 package app;
 
 import javafx.application.Application;
@@ -21,7 +22,7 @@ public class SongLib extends Application {
 				loader.getController();
 		listController.start(primaryStage);
 
-		Scene scene = new Scene(root, 600, 400); //param(root, length, height)
+		Scene scene = new Scene(root, 600, 500); //param(root, length, height)
 		primaryStage.setTitle("Song Library - Greg Fuerte & Aries Regalado");
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
@@ -32,7 +33,6 @@ public class SongLib extends Application {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		launch(args);
-
 	}
 
 }

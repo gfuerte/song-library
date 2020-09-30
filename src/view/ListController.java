@@ -1,3 +1,4 @@
+//Project by Greg Fuerte & Aries Regalado
 package view;
 
 import java.io.File;
@@ -34,13 +35,15 @@ public class ListController {
 	@FXML
 	ListView<String> listView;
 	@FXML
-	Text songName, songArtist, songAlbum, songYear;
-	@FXML
 	Button add, edit, delete;
-
+	@FXML
+	TextField songName, songArtist, songAlbum, songYear;
+	@FXML
+	TextField addSongName, addSongArtist, addSongAlbum, addSongYear;
+	
 	private ObservableList<String> songList;
 	private HashMap<String, Song> songMap = new HashMap<>();
-	private final String separator = "   -   ";
+	private final String separator = " \u200e- ";
 
 	public void start(Stage mainStage) {
 		songList = FXCollections.observableArrayList(readFile());
@@ -55,8 +58,7 @@ public class ListController {
 			songAlbum.setText("");
 			songYear.setText("");
 		} else {
-			String label = listView.getSelectionModel().getSelectedItem();
-			Song song = songMap.get(label.substring(0, label.indexOf(separator)));
+			Song song = songMap.get(listView.getSelectionModel().getSelectedItem());
 			songName.setText(song.getName());
 			songArtist.setText(song.getArtist());
 			songAlbum.setText(song.getAlbum());
@@ -103,7 +105,7 @@ public class ListController {
 						break;
 					case 4:
 						year = data;
-						songMap.put(name, new Song(name, artist, album, year));
+						songMap.put(name + separator + artist, new Song(name, artist, album, year));
 						count = 0;
 						break;
 					}
@@ -130,9 +132,7 @@ public class ListController {
 			file.createNewFile();
 			FileWriter writer = new FileWriter("song.txt");
 			for (int i = 0; i < songList.size(); i++) {
-				String label = songList.get(i);
-				Song song = songMap.get(label.substring(0, label.indexOf(separator)));
-	
+				Song song = songMap.get(songList.get(i));
 				writer.write(song.getName() + "\n" + song.getArtist() + "\n" + song.getAlbum() + "\n" + song.getYear()
 						+ "\n");
 			}
@@ -145,6 +145,14 @@ public class ListController {
 
 	@FXML
 	private void addSong(ActionEvent event) {
+		//add song textfields variable names: addSongName, addSongArtist, addSongAlbum, addSongYear
+		
+		/* Accessing textfields
+		 * String name = addSongName.getText();
+		 * System.out.println(name);
+		 */
+		
+		
 		Dialog<Song> d = new Dialog<>();
 		d.setTitle("Song");
 		d.setHeaderText("Please Add The Respective Information For Song");
@@ -193,15 +201,16 @@ public class ListController {
 				return;
 			}
 
+			System.out.println(name + " " + artist);
 			for (String s : songList) {
-				Song song = songMap.get(s.substring(0, s.indexOf(separator)));
-				if (song.getName().toLowerCase().equals(name) && song.getArtist().toLowerCase().equals(artist)) {
+				Song song = songMap.get(s);
+				if (name.compareToIgnoreCase(song.getName()) == 0 && artist.compareToIgnoreCase(song.getArtist()) == 0) {
 					Alert alert = new Alert(AlertType.ERROR);
 					String content = "This song already exists";
 					alert.setContentText(content);
 					alert.showAndWait();
 					return;
-				}
+				} 
 			}
 			
 			if(!year.isEmpty()) {
@@ -217,7 +226,7 @@ public class ListController {
 			}
 			
 			Song song = new Song(name, artist, album, year);
-			songMap.put(name, song);
+			songMap.put(name + separator + artist, song);
 			insertSong(song);
 		}
 	}
@@ -231,12 +240,10 @@ public class ListController {
 			alert.showAndWait();
 			return;
 		}
-		
-		String label = listView.getSelectionModel().getSelectedItem();
-		Song song = songMap.get(label.substring(0, label.indexOf(separator)));
+		Song song = songMap.get(listView.getSelectionModel().getSelectedItem());
 		int index = listView.getSelectionModel().getSelectedIndex();
 		songList.remove(song.getName() + separator + song.getArtist());
-		songMap.remove(song.getName());
+		songMap.remove(song.getName() + separator + song.getArtist());
 
 		if (songList.size() == 0) {
 			songName.setText("");
@@ -252,8 +259,7 @@ public class ListController {
 			listView.getSelectionModel().select(index);
 		}
 		
-		label = listView.getSelectionModel().getSelectedItem();
-		song = songMap.get(label.substring(0, label.indexOf(separator)));
+		song = songMap.get(listView.getSelectionModel().getSelectedItem());
 		songName.setText(song.getName());
 		songArtist.setText(song.getArtist());
 		songAlbum.setText(song.getAlbum());
@@ -261,7 +267,7 @@ public class ListController {
 	}
 
 	@FXML
-	private void editSong(ActionEvent event) {
+	private void editSong(ActionEvent event) {		
 		Alert alert = new Alert(AlertType.INFORMATION);
 		String content = "we gon edit";
 		alert.setContentText(content);
@@ -269,13 +275,8 @@ public class ListController {
 	}
 
 	private void selectItem(Stage mainStage) {
-		String label = listView.getSelectionModel().getSelectedItem();
-		Song song;
-		if (label == null) {
-			song = new Song("", "", "", "");
-		} else {
-			song = songMap.get(label.substring(0, label.indexOf(separator)));
-		}
+		Song song = songMap.get(listView.getSelectionModel().getSelectedItem());
+		if (song == null) song = new Song("", "", "", "");
 		songName.setText(song.getName());
 		songArtist.setText(song.getArtist());
 		songAlbum.setText(song.getAlbum());

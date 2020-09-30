@@ -13,7 +13,7 @@ The Eternal Dance
 TestName
 TestArtist
 TestAlbum
-TestYear
+2020
 Welcome to the Black Parade
 My Chemical Romance
 
