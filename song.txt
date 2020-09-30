@@ -1,7 +1,3 @@
-TestName
-TestArtist
-TestAlbum
-TestYear
 Forever
 Drake, Kanye West, Lil Wayne, Eminem
 More Than A Game
@@ -14,6 +10,10 @@ September
 Earth, Wind & Fire
 The Eternal Dance
 1992
+TestName
+TestArtist
+TestAlbum
+TestYear
 Welcome to the Black Parade
 My Chemical Romance
 
