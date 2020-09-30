@@ -7,16 +7,24 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import models.Song;
@@ -136,10 +144,88 @@ public class ListController {
 	
 	@FXML
     private void addSong(ActionEvent event) {
-		Alert alert = new Alert(AlertType.INFORMATION);
-		String content = "we gon add";
-		alert.setContentText(content);
-		alert.showAndWait();
+		Dialog<Song> d = new Dialog<>();
+		d.setTitle("Song");
+		d.setHeaderText("Please Add The Respective Information For Song");
+		
+		//Will create a grid of rows and columns
+		GridPane g = new GridPane();
+		g.setPadding(new Insets(10, 10, 10, 10));
+		g.setMinSize(300, 300);
+		g.setVgap(8);
+		g.setHgap(10);
+				
+		Label l1 = new Label("Song Name: ");
+		GridPane.setConstraints(l1, 0, 0);
+		Label l2 = new Label("Artist Name: ");
+		GridPane.setConstraints(l2, 0, 1);
+		Label l3 = new Label("Year Released: ");
+		GridPane.setConstraints(l3, 0, 2);
+		Label l4 = new Label("Album Name: ");
+		GridPane.setConstraints(l4, 0, 3);
+	
+		TextField t1 = new TextField();
+		GridPane.setConstraints(t1, 1, 0);
+		TextField t2 = new TextField();
+		GridPane.setConstraints(t2, 1, 1);
+		TextField t3 = new TextField();
+		GridPane.setConstraints(t3, 1, 2);
+		TextField t4 = new TextField();
+		GridPane.setConstraints(t4, 1, 3);
+		
+		ButtonType apply = new ButtonType("Apply", ButtonData.APPLY);
+		g.getChildren().addAll(l1,t1,l2,t2,l3,t3,l4,t4);
+		d.getDialogPane().getButtonTypes().addAll(apply);
+		d.getDialogPane().setContent(g);
+
+		System.out.println(t1);
+		
+		  Optional<Song> result = d.showAndWait();
+		  if(result.isPresent()) {
+			String sName = t1.getText();
+			String aName = t2.getText();
+			String year = t3.getText();
+			String album = t4.getText();
+
+			if(sName.isEmpty() || aName.isEmpty()) {
+				
+						Alert alert = new Alert(AlertType.ERROR);
+						String content = "Please make sure song name and artist name is not empty";
+						alert.setContentText(content);
+						alert.showAndWait();
+						return;
+			}
+			 
+			for(String s : songList) {
+				Song song = songMap.get(s);
+				 
+				if(song.getName().toLowerCase().equals(sName) && song.getArtist().toLowerCase().equals(aName)) {
+					Alert alert = new Alert(AlertType.ERROR);
+					String content = "This song already exists";
+					alert.setContentText(content);
+					alert.showAndWait();
+					return;
+	
+				}				 
+			}
+			 		 
+			try {
+				Integer.parseInt(year);
+			}
+			catch (NumberFormatException e) {
+				Alert alert = new Alert(AlertType.ERROR);
+					String content = "Year is not valid";
+					alert.setContentText(content);
+					alert.showAndWait();
+					return;
+			}
+			 	
+			Song song = new Song(sName, aName, album, year);
+			songMap.put(sName, song);
+			songList.add(song.getName());
+			
+		  }
+		  listView.getSelectionModel().selectLast();
     }
 	
 	@FXML
