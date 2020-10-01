@@ -45,19 +45,19 @@
          </textFill>
       </Label>
       <TextField fx:id="songName" layoutX="28.0" layoutY="82.0" prefHeight="25.0" prefWidth="243.0" />
-      <Label alignment="CENTER" layoutX="8.0" layoutY="135.0" minWidth="60.0" prefWidth="73.0" style="&#10;" text="Artist:" textAlignment="CENTER" wrapText="false">
+      <Label alignment="CENTER" layoutX="7.0" layoutY="135.0" minWidth="60.0" prefWidth="73.0" style="&#10;" text="Artist:" textAlignment="CENTER" wrapText="false">
          <textFill>
             <Color blue="0.624" green="0.624" red="0.624" fx:id="x211" />
          </textFill>
       </Label>
       <TextField fx:id="songArtist" layoutX="28.0" layoutY="152.0" prefHeight="25.0" prefWidth="243.0" />
-      <Label alignment="CENTER" layoutX="8.0" layoutY="205.0" minWidth="60.0" prefWidth="73.0" style="&#10;" text="Album:" textAlignment="CENTER" wrapText="false">
+      <Label alignment="CENTER" layoutX="10.0" layoutY="205.0" minWidth="60.0" prefWidth="73.0" style="&#10;" text="Album:" textAlignment="CENTER" wrapText="false">
          <textFill>
             <Color blue="0.624" green="0.624" red="0.624" fx:id="x212" />
          </textFill>
       </Label>
       <TextField fx:id="songAlbum" layoutX="28.0" layoutY="222.0" prefHeight="25.0" prefWidth="243.0" />
-      <Label alignment="CENTER" layoutX="8.0" layoutY="275.0" minWidth="60.0" prefWidth="73.0" style="&#10;" text="Year:" textAlignment="CENTER" wrapText="false">
+      <Label alignment="CENTER" layoutX="4.0" layoutY="275.0" minWidth="60.0" prefWidth="73.0" style="&#10;" text="Year:" textAlignment="CENTER" wrapText="false">
          <textFill>
             <Color blue="0.624" green="0.624" red="0.624" fx:id="x213" />
          </textFill>
