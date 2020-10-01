@@ -145,90 +145,53 @@ public class ListController {
 
 	@FXML
 	private void addSong(ActionEvent event) {
-		//add song textfields variable names: addSongName, addSongArtist, addSongAlbum, addSongYear
+		String songName = addSongName.getText();
+		String artistName = addSongArtist.getText();
+		String album = addSongAlbum.getText();
+		String year = addSongYear.getText();
 		
-		/* Accessing textfields
-		 * String name = addSongName.getText();
-		 * System.out.println(name);
-		 */
-		
-		
-		Dialog<Song> d = new Dialog<>();
-		d.setTitle("Song");
-		d.setHeaderText("Please Add The Respective Information For Song");
-
-		GridPane g = new GridPane();
-		g.setPadding(new Insets(10, 10, 10, 10));
-		g.setMinSize(300, 300);
-		g.setVgap(8);
-		g.setHgap(10);
-
-		Label l1 = new Label("Song Name: ");
-		GridPane.setConstraints(l1, 0, 0);
-		Label l2 = new Label("Artist Name: ");
-		GridPane.setConstraints(l2, 0, 1);
-		Label l3 = new Label("Year Released: ");
-		GridPane.setConstraints(l3, 0, 2);
-		Label l4 = new Label("Album Name: ");
-		GridPane.setConstraints(l4, 0, 3);
-
-		TextField t1 = new TextField();
-		GridPane.setConstraints(t1, 1, 0);
-		TextField t2 = new TextField();
-		GridPane.setConstraints(t2, 1, 1);
-		TextField t3 = new TextField();
-		GridPane.setConstraints(t3, 1, 2);
-		TextField t4 = new TextField();
-		GridPane.setConstraints(t4, 1, 3);
-
-		ButtonType apply = new ButtonType("Apply", ButtonData.APPLY);
-		g.getChildren().addAll(l1, t1, l2, t2, l3, t3, l4, t4);
-		d.getDialogPane().getButtonTypes().addAll(apply);
-		d.getDialogPane().setContent(g);
-
-		Optional<Song> result = d.showAndWait();
-		if (result.isPresent()) {
-			String name = t1.getText();
-			String artist = t2.getText();
-			String year = t3.getText();
-			String album = t4.getText();
-
-			if (name.isEmpty() || artist.isEmpty()) {
+		if(songName.isEmpty() || artistName.isEmpty()) {
+			Alert alert = new Alert(AlertType.ERROR);
+			String content = "Please make sure song name and artist name is not empty";
+			alert.setContentText(content);
+			alert.showAndWait();
+			return;
+		}		
+		for (String s : songList) {
+			Song song = songMap.get(s);
+			if (songName.compareToIgnoreCase(song.getName()) == 0 && artistName.compareToIgnoreCase(song.getArtist()) == 0) {
 				Alert alert = new Alert(AlertType.ERROR);
-				String content = "Please make sure song name and artist name is not empty";
+				String content = "This song already exists";
 				alert.setContentText(content);
 				alert.showAndWait();
 				return;
-			}
-
-			System.out.println(name + " " + artist);
-			for (String s : songList) {
-				Song song = songMap.get(s);
-				if (name.compareToIgnoreCase(song.getName()) == 0 && artist.compareToIgnoreCase(song.getArtist()) == 0) {
-					Alert alert = new Alert(AlertType.ERROR);
-					String content = "This song already exists";
-					alert.setContentText(content);
-					alert.showAndWait();
-					return;
-				} 
-			}
-			
-			if(!year.isEmpty()) {
-				try {
-					Integer.parseInt(year);
-				} catch (NumberFormatException e) {
-					Alert alert = new Alert(AlertType.ERROR);
-					String content = "Year is not valid";
+			} 
+		}
+		
+		if(!year.isEmpty()) {
+			Alert alert = new Alert(AlertType.ERROR);
+			String content = "Year is not valid";
+			try {
+				if(Integer.parseInt(year) <= 0) {
 					alert.setContentText(content);
 					alert.showAndWait();
 					return;
 				}
+			} catch (NumberFormatException e) {
+				alert.setContentText(content);
+				alert.showAndWait();
+				return;
 			}
-			
-			Song song = new Song(name, artist, album, year);
-			songMap.put(name + separator + artist, song);
-			insertSong(song);
 		}
+		
+		Song song = new Song(songName, artistName, album, year);
+		songMap.put(songName + separator + artistName, song);
+		insertSong(song);
+		
+		addSongName.setText("");
+		addSongArtist.setText("");
+		addSongAlbum.setText("");
+		addSongYear.setText("");
 	}
 
 	@FXML
