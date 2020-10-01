@@ -156,9 +156,6 @@ public class ListController {
 				return;
 			}
 		}
-		
-		if(album.isBlank()) album = "";
-		if(year.isBlank()) year = "";
 
 		if (!year.isEmpty()) {
 			Alert alert = new Alert(AlertType.ERROR);
@@ -259,9 +256,6 @@ public class ListController {
 			alert.showAndWait();
 			return;
 		}
-		
-		if(album.isBlank()) album = "";
-		if(year.isBlank()) year = "";
 		
 		if (!year.isEmpty()) {
 			content = "Year is not valid";
