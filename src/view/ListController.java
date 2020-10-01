@@ -16,18 +16,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import models.Song;
 
@@ -178,12 +172,12 @@ public class ListController {
 			}
 		}
 
-		Alert alert = new Alert(AlertType.INFORMATION);
+		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Confirmation");
 		alert.setHeaderText("Are you sure you want to perform this action?");
 
 		Optional<ButtonType> result = alert.showAndWait();
-		if (result.isPresent()) {
+		if (result.get() == ButtonType.OK) {
 			Song song = new Song(songName, artistName, album, year);
 			songMap.put(songName + separator + artistName, song);
 			insertSong(song);
@@ -197,18 +191,19 @@ public class ListController {
 
 	@FXML
 	private void deleteSong(ActionEvent event) {
-		Alert alert = new Alert(AlertType.INFORMATION);
+		Alert alert = new Alert(AlertType.ERROR);
 		if (songList.size() == 0) {
 			String content = "No songs to be deleted";
 			alert.setContentText(content);
 			alert.showAndWait();
 			return;
 		}
+		alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Confirmation");
 		alert.setHeaderText("Are you sure you want to perform this action?");
 
 		Optional<ButtonType> result = alert.showAndWait();
-		if (result.isPresent()) {
+		if (result.get() == ButtonType.OK) {
 			Song song = songMap.get(listView.getSelectionModel().getSelectedItem());
 			int index = listView.getSelectionModel().getSelectedIndex();
 			songList.remove(song.getName() + separator + song.getArtist());
@@ -238,7 +233,7 @@ public class ListController {
 
 	@FXML
 	private void editSong(ActionEvent event) {
-		Alert alert = new Alert(AlertType.INFORMATION);
+		Alert alert = new Alert(AlertType.ERROR);
 		String content = "";
 		if (songList.size() == 0) {
 			content = "No song to be edited";
@@ -283,11 +278,12 @@ public class ListController {
 			}
 		}
 
+		alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Confirmation");
 		alert.setHeaderText("Are you sure you want to perform this action?");
 
 		Optional<ButtonType> result = alert.showAndWait();
-		if (result.isPresent()) {
+		if (result.get() == ButtonType.OK) {
 			songList.remove(original.getName() + separator + original.getArtist());
 			songMap.remove(original.getName() + separator + original.getArtist());
 
@@ -318,14 +314,15 @@ public class ListController {
 			listView.getSelectionModel().selectFirst();
 		}
 
+		String info = song.getName() + separator + song.getArtist();
 		for (int i = 0; i < songList.size(); i++) {
-			if (song.getName().compareToIgnoreCase(songList.get(i)) < 0) {
-				songList.add(i, song.getName() + separator + song.getArtist());
+			if (info.compareToIgnoreCase(songList.get(i)) < 0) {
+				songList.add(i, info);
 				listView.getSelectionModel().select(i);
 				return;
 			}
 		}
-		songList.add(song.getName() + separator + song.getArtist());
+		songList.add(info);
 		listView.getSelectionModel().selectLast();
 	}
 }

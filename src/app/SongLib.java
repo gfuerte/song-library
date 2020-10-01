@@ -22,7 +22,7 @@ public class SongLib extends Application {
 				loader.getController();
 		listController.start(primaryStage);
 
-		Scene scene = new Scene(root, 600, 500); //param(root, length, height)
+		Scene scene = new Scene(root, 600, 500);
 		primaryStage.setTitle("Song Library - Greg Fuerte & Aries Regalado");
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
