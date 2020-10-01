@@ -40,7 +40,7 @@ public class ListController {
 	TextField songName, songArtist, songAlbum, songYear;
 	@FXML
 	TextField addSongName, addSongArtist, addSongAlbum, addSongYear;
-	
+
 	private ObservableList<String> songList;
 	private HashMap<String, Song> songMap = new HashMap<>();
 	private final String separator = " \u200e- ";
@@ -149,30 +149,31 @@ public class ListController {
 		String artistName = addSongArtist.getText();
 		String album = addSongAlbum.getText();
 		String year = addSongYear.getText();
-		
-		if(songName.isEmpty() || artistName.isEmpty()) {
+
+		if (songName.isEmpty() || artistName.isEmpty()) {
 			Alert alert = new Alert(AlertType.ERROR);
 			String content = "Please make sure song name and artist name is not empty";
 			alert.setContentText(content);
 			alert.showAndWait();
 			return;
-		}		
+		}
 		for (String s : songList) {
 			Song song = songMap.get(s);
-			if (songName.compareToIgnoreCase(song.getName()) == 0 && artistName.compareToIgnoreCase(song.getArtist()) == 0) {
+			if (songName.compareToIgnoreCase(song.getName()) == 0
+					&& artistName.compareToIgnoreCase(song.getArtist()) == 0) {
 				Alert alert = new Alert(AlertType.ERROR);
 				String content = "This song already exists";
 				alert.setContentText(content);
 				alert.showAndWait();
 				return;
-			} 
+			}
 		}
-		
-		if(!year.isEmpty()) {
+
+		if (!year.isEmpty()) {
 			Alert alert = new Alert(AlertType.ERROR);
 			String content = "Year is not valid";
 			try {
-				if(Integer.parseInt(year) <= 0) {
+				if (Integer.parseInt(year) <= 0) {
 					alert.setContentText(content);
 					alert.showAndWait();
 					return;
@@ -183,11 +184,11 @@ public class ListController {
 				return;
 			}
 		}
-		
+
 		Song song = new Song(songName, artistName, album, year);
 		songMap.put(songName + separator + artistName, song);
 		insertSong(song);
-		
+
 		addSongName.setText("");
 		addSongArtist.setText("");
 		addSongAlbum.setText("");
@@ -196,7 +197,7 @@ public class ListController {
 
 	@FXML
 	private void deleteSong(ActionEvent event) {
-		if(songList.size() == 0) {
+		if (songList.size() == 0) {
 			Alert alert = new Alert(AlertType.INFORMATION);
 			String content = "No songs to be deleted";
 			alert.setContentText(content);
@@ -221,7 +222,7 @@ public class ListController {
 		} else {
 			listView.getSelectionModel().select(index);
 		}
-		
+
 		song = songMap.get(listView.getSelectionModel().getSelectedItem());
 		songName.setText(song.getName());
 		songArtist.setText(song.getArtist());
@@ -230,30 +231,77 @@ public class ListController {
 	}
 
 	@FXML
-	private void editSong(ActionEvent event) {		
+	private void editSong(ActionEvent event) {
 		Alert alert = new Alert(AlertType.INFORMATION);
-		String content = "we gon edit";
-		alert.setContentText(content);
-		alert.showAndWait();
+		String content = "";
+		if (songList.size() == 0) {
+			content = "No song to be edited";
+			alert.setContentText(content);
+			alert.showAndWait();
+			return;
+		}
+
+		String name = songName.getText();
+		String artist = songArtist.getText();
+		String album = songAlbum.getText();
+		String year = songYear.getText();
+
+		Song original = songMap.get(listView.getSelectionModel().getSelectedItem());
+		
+		if(name.equals("") || artist.equals("")) {
+			content = "Please enter song name and artist";
+			alert.setContentText(content);
+			alert.showAndWait();
+			return;
+		}
+
+		if (original.getName().compareToIgnoreCase(name) == 0 && original.getArtist().compareToIgnoreCase(artist) == 0
+				&& original.getAlbum().compareToIgnoreCase(album) == 0
+				&& original.getYear().compareToIgnoreCase(year) == 0) {
+			content = "No changes to be made";
+			alert.setContentText(content);
+			alert.showAndWait();
+			return;
+		}
+
+		for (String s : songList) {
+			Song song = songMap.get(s);
+			if (song.getName().compareToIgnoreCase(original.getName()) == 0
+					&& song.getArtist().compareToIgnoreCase(original.getArtist()) == 0)
+				continue;
+			if (name.compareToIgnoreCase(song.getName()) == 0 && artist.compareToIgnoreCase(song.getArtist()) == 0) {
+				content = "This song already exists";
+				alert.setContentText(content);
+				alert.showAndWait();
+				return;
+			}
+		}
+		songList.remove(original.getName() + separator + original.getArtist());
+		songMap.remove(original.getName() + separator + original.getArtist());
+		
+		Song modified = new Song(name, artist, album, year);
+		songMap.put(modified.getName() + separator + modified.getArtist(), modified);
+		insertSong(modified);
 	}
 
 	private void selectItem(Stage mainStage) {
 		Song song = songMap.get(listView.getSelectionModel().getSelectedItem());
-		if (song == null) song = new Song("", "", "", "");
+		if (song == null)
+			song = new Song("", "", "", "");
 		songName.setText(song.getName());
 		songArtist.setText(song.getArtist());
 		songAlbum.setText(song.getAlbum());
 		songYear.setText(song.getYear());
 	}
-	
+
 	private void insertSong(Song song) {
-		if(songList.size() == 0) {
+		if (songList.size() == 0) {
 			songList.add(song.getName() + separator + song.getArtist());
 			listView.getSelectionModel().selectFirst();
 		}
-		
-		for(int i = 0; i < songList.size(); i++) {
-			if(song.getName().compareToIgnoreCase(songList.get(i)) < 0) {
+
+		for (int i = 0; i < songList.size(); i++) {
+			if (song.getName().compareToIgnoreCase(songList.get(i)) < 0) {
 				songList.add(i, song.getName() + separator + song.getArtist());
 				listView.getSelectionModel().select(i);
 				return;
