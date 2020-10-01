@@ -49,8 +49,6 @@ public class ListController {
 		songList = FXCollections.observableArrayList(readFile());
 
 		listView.setItems(songList);
-
-		// select the first item
 		listView.getSelectionModel().select(0);
 		if (songMap.size() == 0) {
 			songName.setText("");
@@ -65,18 +63,14 @@ public class ListController {
 			songYear.setText(song.getYear());
 		}
 
-		// set listener for the items
 		listView.getSelectionModel().selectedIndexProperty()
 				.addListener((songList, oldVal, newVal) -> selectItem(mainStage));
 
-		// after user adds/deletes/edits songs writeFile updates song.txt file
 		mainStage.setOnCloseRequest(event -> {
-			// writeFile writes to song.txt file
 			writeFile(songList);
 		});
 	}
 
-	// locates song.txt and reads
 	private List<String> readFile() {
 		List<String> list = new ArrayList<>();
 
@@ -140,7 +134,6 @@ public class ListController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@FXML
@@ -185,49 +178,62 @@ public class ListController {
 			}
 		}
 
-		Song song = new Song(songName, artistName, album, year);
-		songMap.put(songName + separator + artistName, song);
-		insertSong(song);
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Confirmation");
+		alert.setHeaderText("Are you sure you want to perform this action?");
 
-		addSongName.setText("");
-		addSongArtist.setText("");
-		addSongAlbum.setText("");
-		addSongYear.setText("");
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.isPresent()) {
+			Song song = new Song(songName, artistName, album, year);
+			songMap.put(songName + separator + artistName, song);
+			insertSong(song);
+
+			addSongName.setText("");
+			addSongArtist.setText("");
+			addSongAlbum.setText("");
+			addSongYear.setText("");
+		}
 	}
 
 	@FXML
 	private void deleteSong(ActionEvent event) {
+		Alert alert = new Alert(AlertType.INFORMATION);
 		if (songList.size() == 0) {
-			Alert alert = new Alert(AlertType.INFORMATION);
 			String content = "No songs to be deleted";
 			alert.setContentText(content);
 			alert.showAndWait();
 			return;
 		}
-		Song song = songMap.get(listView.getSelectionModel().getSelectedItem());
-		int index = listView.getSelectionModel().getSelectedIndex();
-		songList.remove(song.getName() + separator + song.getArtist());
-		songMap.remove(song.getName() + separator + song.getArtist());
+		alert.setTitle("Confirmation");
+		alert.setHeaderText("Are you sure you want to perform this action?");
 
-		if (songList.size() == 0) {
-			songName.setText("");
-			songArtist.setText("");
-			songAlbum.setText("");
-			songYear.setText("");
-			return;
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.isPresent()) {
+			Song song = songMap.get(listView.getSelectionModel().getSelectedItem());
+			int index = listView.getSelectionModel().getSelectedIndex();
+			songList.remove(song.getName() + separator + song.getArtist());
+			songMap.remove(song.getName() + separator + song.getArtist());
+
+			if (songList.size() == 0) {
+				songName.setText("");
+				songArtist.setText("");
+				songAlbum.setText("");
+				songYear.setText("");
+				return;
+			}
+
+			if (index == songList.size()) {
+				listView.getSelectionModel().select(index - 1);
+			} else {
+				listView.getSelectionModel().select(index);
+			}
+
+			song = songMap.get(listView.getSelectionModel().getSelectedItem());
+			songName.setText(song.getName());
+			songArtist.setText(song.getArtist());
+			songAlbum.setText(song.getAlbum());
+			songYear.setText(song.getYear());
 		}
-
-		if (index == songList.size()) {
-			listView.getSelectionModel().select(index - 1);
-		} else {
-			listView.getSelectionModel().select(index);
-		}
-
-		song = songMap.get(listView.getSelectionModel().getSelectedItem());
-		songName.setText(song.getName());
-		songArtist.setText(song.getArtist());
-		songAlbum.setText(song.getAlbum());
-		songYear.setText(song.getYear());
 	}
 
 	@FXML
@@ -247,8 +253,8 @@ public class ListController {
 		String year = songYear.getText();
 
 		Song original = songMap.get(listView.getSelectionModel().getSelectedItem());
-		
-		if(name.equals("") || artist.equals("")) {
+
+		if (name.equals("") || artist.equals("")) {
 			content = "Please enter song name and artist";
 			alert.setContentText(content);
 			alert.showAndWait();
@@ -276,12 +282,24 @@ public class ListController {
 				return;
 			}
 		}
-		songList.remove(original.getName() + separator + original.getArtist());
-		songMap.remove(original.getName() + separator + original.getArtist());
-		
-		Song modified = new Song(name, artist, album, year);
-		songMap.put(modified.getName() + separator + modified.getArtist(), modified);
-		insertSong(modified);
+
+		alert.setTitle("Confirmation");
+		alert.setHeaderText("Are you sure you want to perform this action?");
+
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.isPresent()) {
+			songList.remove(original.getName() + separator + original.getArtist());
+			songMap.remove(original.getName() + separator + original.getArtist());
+
+			Song modified = new Song(name, artist, album, year);
+			songMap.put(modified.getName() + separator + modified.getArtist(), modified);
+			insertSong(modified);
+		} else {
+			songName.setText(original.getName());
+			songArtist.setText(original.getArtist());
+			songAlbum.setText(original.getAlbum());
+			songYear.setText(original.getYear());
+		}
 	}
 
 	private void selectItem(Stage mainStage) {
