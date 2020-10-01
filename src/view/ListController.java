@@ -132,10 +132,10 @@ public class ListController {
 
 	@FXML
 	private void addSong(ActionEvent event) {
-		String songName = addSongName.getText();
-		String artistName = addSongArtist.getText();
-		String album = addSongAlbum.getText();
-		String year = addSongYear.getText();
+		String songName = addSongName.getText().trim();
+		String artistName = addSongArtist.getText().trim();
+		String album = addSongAlbum.getText().trim();
+		String year = addSongYear.getText().trim();
 
 		if (songName.isEmpty() || artistName.isEmpty()) {
 			Alert alert = new Alert(AlertType.ERROR);
@@ -144,6 +144,7 @@ public class ListController {
 			alert.showAndWait();
 			return;
 		}
+		
 		for (String s : songList) {
 			Song song = songMap.get(s);
 			if (songName.compareToIgnoreCase(song.getName()) == 0
@@ -155,6 +156,9 @@ public class ListController {
 				return;
 			}
 		}
+		
+		if(album.isBlank()) album = "";
+		if(year.isBlank()) year = "";
 
 		if (!year.isEmpty()) {
 			Alert alert = new Alert(AlertType.ERROR);
@@ -242,18 +246,36 @@ public class ListController {
 			return;
 		}
 
-		String name = songName.getText();
-		String artist = songArtist.getText();
-		String album = songAlbum.getText();
-		String year = songYear.getText();
+		String name = songName.getText().trim();
+		String artist = songArtist.getText().trim();
+		String album = songAlbum.getText().trim();
+		String year = songYear.getText().trim();
 
 		Song original = songMap.get(listView.getSelectionModel().getSelectedItem());
 
-		if (name.equals("") || artist.equals("")) {
+		if (name.isEmpty() || artist.isEmpty()) {
 			content = "Please enter song name and artist";
 			alert.setContentText(content);
 			alert.showAndWait();
 			return;
+		}
+		
+		if(album.isBlank()) album = "";
+		if(year.isBlank()) year = "";
+		
+		if (!year.isEmpty()) {
+			content = "Year is not valid";
+			try {
+				if (Integer.parseInt(year) <= 0) {
+					alert.setContentText(content);
+					alert.showAndWait();
+					return;
+				}
+			} catch (NumberFormatException e) {
+				alert.setContentText(content);
+				alert.showAndWait();
+				return;
+			}
 		}
 
 		if (original.getName().compareToIgnoreCase(name) == 0 && original.getArtist().compareToIgnoreCase(artist) == 0
