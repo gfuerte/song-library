@@ -328,6 +328,7 @@ public class ListController {
 		if (songList.size() == 0) {
 			songList.add(song.getName() + separator + song.getArtist());
 			listView.getSelectionModel().selectFirst();
+			return;
 		}
 
 		String info = song.getName() + separator + song.getArtist();
