@@ -1,6 +1,7 @@
 # song-library
 Java application with a graphical user interface to manage a library of songs using JavaFX. 
-Song libarary displays a single with three functions: song list display, details of songs (song name, artist, ablum, year), and buttons for adding new songs, deleting a selected song, and editing a selected song.
+
+Song library displays a single with three functions: song list display, details of songs (song name, artist, album, year), and buttons for adding new songs, deleting a selected song, and editing a selected song.
 
 Add: When a new song is added, the song name and artist should be entered at the very least. Year and album are optional. If the name and artist are the same as an existing song, the add is not be allowed - a message is shown in a pop-up dialog within the main application window. The newly added song is automatically placed in the correct position in the alphabetical order in the list. Also, it is automatically selected, replacing the previously selected song, and its details should be shown.
 
