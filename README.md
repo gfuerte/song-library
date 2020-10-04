@@ -1,5 +1,5 @@
 # song-library
-Java application with a graphical user interface to manage a library of songs using JavaFX. 
+Java application with a graphical user interface to manage a library of songs implemented using JavaFX and Scene Builder. 
 
 Song library displays a single with three functions: song list display, details of songs (song name, artist, album, year), and buttons for adding new songs, deleting a selected song, and editing a selected song.
 
